@@ -1,0 +1,19 @@
+.btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+.secondary{
+    color: white;
+    background-color: rgb(205, 46, 46);
+    width: 100%;
+    border-radius: 5px;
+    padding: 8px;
+    transition: 0.2s all;
+}
+.secondary:hover{
+    background-color: rgb(228, 43, 43) !important;
+}
