@@ -1,0 +1,14 @@
+.form-input{
+    border: none;
+}
+.destination-options{
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    gap: 5px;
+    background-color: rgb(255, 255, 255, 0.8);
+    border-end-start-radius: 15px;
+    border-end-end-radius: 15px;
+}
