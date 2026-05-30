@@ -6,7 +6,9 @@ import { requestCordinates } from "#/api/requestCordinates";
 import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
 
 const FormInput = () => {
-  const [searchedDestinations, setSearchedDestinations] = useState<GeoJsonFeature[]>([
+  const [searchedDestinations, setSearchedDestinations] = useState<
+    GeoJsonFeature[]
+  >([
     {
       type: "Feature",
       geometry: {
@@ -39,6 +41,7 @@ const FormInput = () => {
       bbox: [],
     },
   ]);
+  const [activeSearch, setActiveSearch] = useState<boolean>(false);
 
   const handleSearchRequest = async (destination: string) => {
     const response = await requestCordinates(destination);
@@ -49,7 +52,10 @@ const FormInput = () => {
   const searchDestinations = debounce(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      handleSearchRequest(value);
+      if (value != "") {
+        handleSearchRequest(value);
+        setActiveSearch(true);
+      } else setActiveSearch(false);
     },
     1000,
   );
@@ -60,15 +66,16 @@ const FormInput = () => {
         name="start"
         placeholder="Starting point"
         onChange={searchDestinations}
+        variation={activeSearch && 'custom-search'}
       />
-      <div className="destination-options">
-        {searchedDestinations.map(feature => {
+      {activeSearch && (
+        <ul className="destination-options">
+          {searchedDestinations.map((feature) => {
             const label = feature.properties.label;
-            return(
-                <label>{label}</label>
-            )
-        })}
-      </div>
+            return <li>{label}</li>;
+          })}
+        </ul>
+      )}
     </fieldset>
   );
 };

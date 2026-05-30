@@ -4,11 +4,16 @@
 .destination-options{
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    gap: 5px;
     background-color: rgb(255, 255, 255, 0.8);
     border-end-start-radius: 15px;
     border-end-end-radius: 15px;
+}
+.destination-options li{
+    list-style: none;
+    font-size: 1.3rem;
+    padding: 4px 9px;
+}
+.destination-options li:hover{
+    background-color: rgb(240, 197, 25);
+    border-radius: 15px;
 }
