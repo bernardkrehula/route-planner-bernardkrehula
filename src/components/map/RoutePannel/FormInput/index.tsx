@@ -5,8 +5,9 @@ import debounce from "debounce";
 import { requestCordinates } from "#/api/requestCordinates";
 import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
 import { debouncedFetch } from "#/utils/debounceFetch";
+import type { FormInputType } from "#/types/form.types.ts/FormInputType";
 
-const FormInput = () => {
+const FormInput = ({name, placeholder}: FormInputType) => {
   const [searchedDestinations, setSearchedDestinations] = useState<
     GeoJsonFeature[]
   >([
@@ -69,8 +70,8 @@ const FormInput = () => {
   return (
     <fieldset className="form-input">
       <Input
-        name="start"
-        placeholder="Starting point"
+        name={name}
+        placeholder={placeholder}
         value={inputValue}
         onChange={handleInputChange}
         variation={activeSearch && "custom-search"}
