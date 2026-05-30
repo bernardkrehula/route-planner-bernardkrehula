@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "postinstall": "node fix-react-leaflet-markercluster.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,9 +11,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.14",
+    "axios": "^1.16.1",
+    "debounce": "^3.0.0",
+    "leaflet-routing-machine": "^3.2.12",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-leaflet": "^5.0.0-rc.2"
+    "react-leaflet": "^5.0.0-rc.2",
+    "react-leaflet-markercluster": "^5.0.0-rc.0",
+    "react-router": "^7.16.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
