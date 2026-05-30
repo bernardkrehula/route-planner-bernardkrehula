@@ -6,13 +6,15 @@ const Input = ({
   onChange,
   variation,
   type,
-  name
+  name,
+  value
 }: {
   placeholder: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement, HTMLInputElement>;
   variation?: string;
   type?: string;
   name: string;
+  value?: string;
 }) => {
   return (
     <input
@@ -21,6 +23,7 @@ const Input = ({
       name={name}
       onChange={onChange}
       placeholder={placeholder}
+      value={value}
     />
   );
 };
