@@ -12,6 +12,7 @@
     list-style: none;
     font-size: 1.3rem;
     padding: 4px 9px;
+    cursor: pointer;
 }
 .destination-options li:hover{
     background-color: rgb(240, 197, 25);

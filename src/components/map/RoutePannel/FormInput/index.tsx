@@ -4,6 +4,7 @@ import Input from "#/components/ui/input";
 import debounce from "debounce";
 import { requestCordinates } from "#/api/requestCordinates";
 import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
+import { debouncedFetch } from "#/utils/debounceFetch";
 
 const FormInput = () => {
   const [searchedDestinations, setSearchedDestinations] = useState<
@@ -42,37 +43,45 @@ const FormInput = () => {
     },
   ]);
   const [activeSearch, setActiveSearch] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const handleSearchRequest = async (destination: string) => {
     const response = await requestCordinates(destination);
     setSearchedDestinations(response.features);
     console.log("features: ", response.features);
   };
-
-  const searchDestinations = debounce(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      if (value != "") {
-        handleSearchRequest(value);
-        setActiveSearch(true);
-      } else setActiveSearch(false);
-    },
-    1000,
-  );
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value.trim() != "") {
+      debouncedFetch(value, handleSearchRequest);
+      setActiveSearch(true);
+    } else {
+      setActiveSearch(false);
+      setSearchedDestinations([]);
+    }
+  };
+  const handleDestinationClick = (destination: string) => {
+    setInputValue(destination);
+    setActiveSearch(false);
+  };
 
   return (
     <fieldset className="form-input">
       <Input
         name="start"
         placeholder="Starting point"
-        onChange={searchDestinations}
-        variation={activeSearch && 'custom-search'}
+        value={inputValue}
+        onChange={handleInputChange}
+        variation={activeSearch && "custom-search"}
       />
       {activeSearch && (
         <ul className="destination-options">
           {searchedDestinations.map((feature) => {
             const label = feature.properties.label;
-            return <li>{label}</li>;
+            return (
+              <li onClick={() => handleDestinationClick(label)}>{label}</li>
+            );
           })}
         </ul>
       )}
