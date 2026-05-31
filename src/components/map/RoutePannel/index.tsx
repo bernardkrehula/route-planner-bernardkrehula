@@ -1,5 +1,4 @@
 import Btn from "#/components/ui/btn";
-import Input from "#/components/ui/input";
 import { useState, type FormEvent } from "react";
 import "./index.css";
 import FormInput from "./FormInput";
@@ -17,14 +16,13 @@ const RoutePannel = ({handleTravelRoute}) => {
 
   const handleCheckPoints = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const coordinates = {
-      traveling: formData.get("traveling") as string,
-    };
+    
     const startParam = searchParams.get("start");
     const endParams = searchParams.get("end");
+    const travelParams = searchParams.get("travel") || 'driving-car';
+    console.log(travelParams)
     const cords = parseRouteCoordinates(startParam, endParams);
-    handleTravelRoute(cords);
+    handleTravelRoute(cords, travelParams);
   };
 
   const addStopDestination = async () => {

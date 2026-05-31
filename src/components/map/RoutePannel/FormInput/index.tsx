@@ -6,8 +6,12 @@ import { requestCordinates } from "#/api/requestCordinates";
 import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
 import { debouncedFetch } from "#/utils/debounceFetch";
 import type { FormInputType } from "#/types/form.types.ts/FormInputType";
+import { useNavigate, useSearchParams } from "react-router";
 
-const FormInput = ({name, placeholder}: FormInputType) => {
+const FormInput = ({
+  name,
+  placeholder,
+}: FormInputType) => {
   const [searchedDestinations, setSearchedDestinations] = useState<
     GeoJsonFeature[]
   >([
@@ -45,11 +49,12 @@ const FormInput = ({name, placeholder}: FormInputType) => {
   ]);
   const [activeSearch, setActiveSearch] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSearchRequest = async (destination: string) => {
     const response = await requestCordinates(destination);
     setSearchedDestinations(response.features);
-    console.log("features: ", response.features);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -62,9 +67,14 @@ const FormInput = ({name, placeholder}: FormInputType) => {
       setSearchedDestinations([]);
     }
   };
-  const handleDestinationClick = (destination: string) => {
+  const handleDestinationClick = async (destination: string) => {
     setInputValue(destination);
     setActiveSearch(false);
+    const response = await requestCordinates(destination);
+    const cords = response.features[0].geometry.coordinates;
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(name, cords)
+    navigate(`/?${newParams.toString()}`)
   };
 
   return (
@@ -78,10 +88,10 @@ const FormInput = ({name, placeholder}: FormInputType) => {
       />
       {activeSearch && (
         <ul className="destination-options">
-          {searchedDestinations.map((feature) => {
+          {searchedDestinations.map((feature, key) => {
             const label = feature.properties.label;
             return (
-              <li onClick={() => handleDestinationClick(label)}>{label}</li>
+              <li key={key} onClick={() => handleDestinationClick(label)}>{label}</li>
             );
           })}
         </ul>

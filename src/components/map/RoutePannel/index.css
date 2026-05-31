@@ -28,27 +28,6 @@
     margin-bottom: 20px;
     text-transform: uppercase;
 }
-.traveling-options-div{
-    display: flex;
-    width: 100%;
-}
-.traveling-options-div span{
-    font-size: 2rem;
-    position: relative;
-    margin-left: -18px;
-    margin-top: 5px;
-}
-.traveling-options{
-    width: 100%;
-    padding: 10px;
-    border: 1px solid white;
-    border-radius: 10px;
-    cursor: pointer;
-}
-select {
-    appearance: none;
-}
-
 .routing-btns{
     display: flex;
     margin-top: 20px;
