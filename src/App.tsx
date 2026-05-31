@@ -10,7 +10,12 @@ import { distanceCalculator } from "./utils/distanceCalculator";
 const App = ({ defaultCoords }) => {
   const navigate = useNavigate();
   const [travelRoute, setTravelRoute] = useState([[0, 0]]);
-  
+  const [travelInfo, setTravelInfo] = useState({
+    distance: '0',
+    duration: '0',
+  });
+
+ 
 
   return (
     <div className="app">
