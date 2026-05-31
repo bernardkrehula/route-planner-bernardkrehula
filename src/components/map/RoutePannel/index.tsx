@@ -2,29 +2,37 @@ import Btn from "#/components/ui/btn";
 import Input from "#/components/ui/input";
 import { useState, type FormEvent } from "react";
 import "./index.css";
-import { requestCordinates } from "#/api/requestCordinates";
 import FormInput from "./FormInput";
+import { requestRoute } from "#/api/requestRoute";
+import TravelOption from "./TravelOption";
+import { useNavigate, useSearchParams } from "react-router";
+import { parseRouteCoordinates } from "#/utils/mapHelper";
 
-const RoutePannel = () => {
+const RoutePannel = ({handleTravelRoute}) => {
   const [activeStop, setActiveStop] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const startParam = searchParams.get("start");
 
   const handleCheckPoints = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const coordinates = {
-      start: formData.get("start") as string,
-      stop: formData.get("stop") as string,
-      destination: formData.get("destination") as string,
       traveling: formData.get("traveling") as string,
     };
-    const response = await requestCordinates(coordinates.start);
-    response.features.map(feature => {
-        console.log(feature.properties.label)
-    })
+    const startParam = searchParams.get("start");
+    const endParams = searchParams.get("end");
+    const cords = parseRouteCoordinates(startParam, endParams);
+    handleTravelRoute(cords);
   };
-  const addStop = async() => {
-    setActiveStop(prev => !prev);
-  }
+
+  const addStopDestination = async () => {
+    setActiveStop((prev) => !prev);
+  };
+  const clearRoute = () => {
+    navigate("");
+  };
   return (
     <form className="route-pannel" onSubmit={handleCheckPoints}>
       <div className="title">
@@ -32,26 +40,19 @@ const RoutePannel = () => {
         <h1>Route planner</h1>
       </div>
       <div className="destination-inputs">
-        <FormInput/>
-        {activeStop && <Input name="stop" placeholder="Stop" />}
-        <Input name="destination" placeholder="Destination" />
+        <FormInput name="start" placeholder="Start destination" />
+        {activeStop && <FormInput name="stop" placeholder="Stop" />}
+        <FormInput name="end" placeholder="Destination" />
       </div>
-      <Btn type="button" onClick={addStop} variation="secondary">
+      <Btn type="button" onClick={addStopDestination} variation="secondary">
         {activeStop ? "Remove stop" : "Add stop"}
       </Btn>
-      <div className="traveling-options-div">
-        <select name="traveling" className="traveling-options">
-          <option value='driving'>Driving 🚗</option>
-          <option value='walking'>Walking 🚶‍♂️</option>
-        </select>
-        <span>▼</span>
-      </div>
-
+      <TravelOption />
       <div className="routing-btns">
         <Btn type="submit" variation="secondary">
           Calcutate route
         </Btn>
-        <Btn type="reset" variation="secondary">
+        <Btn type="reset" onClick={clearRoute} variation="secondary">
           Clear route
         </Btn>
       </div>
