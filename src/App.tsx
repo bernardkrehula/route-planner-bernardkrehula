@@ -8,7 +8,7 @@ import { timeCalculator } from "./utils/timeCalculator";
 import { distanceCalculator } from "./utils/distanceCalculator";
 
 const App = ({ defaultCoords }) => {
- 
+  const navigate = useNavigate();
   const [travelRoute, setTravelRoute] = useState([[0, 0]]);
   
 
