@@ -1,0 +1,13 @@
+.map-wrapper {
+  width: 100%;
+}
+.leaflet-container {
+  height: 100vh;
+}
+.leaflet-popup-content{
+  display: flex;
+  flex-direction: column;
+}
+.leaflet-popup-content span{
+  font-size: 1.4rem;
+}
