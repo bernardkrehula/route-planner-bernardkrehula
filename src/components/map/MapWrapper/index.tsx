@@ -5,53 +5,80 @@ import {
   Marker,
   TileLayer,
   Popup,
-  useMapEvent,
-  useMapEvents,
   Polyline,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { Icon } from "leaflet";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
+import { parseRouteCoordinates } from "#/utils/mapHelper";
+import { useEffect, useState } from "react";
 import { requestRoute } from "#/api/requestRoute";
+import { timeCalculator } from "#/utils/timeCalculator";
+import { distanceCalculator } from "#/utils/distanceCalculator";
+import RoutePannel from "../RoutePannel";
 
-const MapWrapper = () => {
-  const [cordinates, setCordinates] = useState([
-    [46.334298, 16.273321],
-    [46.305979, 16.335594],
-  ]);
+const MapWrapper = ({ defaultCoords }) => {
+  const [travelRoute, setTravelRoute] = useState([[0, 0]]);
+  const [travelInfo, setTravelInfo] = useState({
+    distance: "0",
+    duration: "0",
+  });
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("");
+  }, []);
+
+  const startParam = searchParams.get("start");
+  const endParams = searchParams.get("end");
+  const cords = parseRouteCoordinates(startParam, endParams);
   const customIcon = new Icon({
     iconUrl: "/location.png",
     iconSize: [38, 38],
   });
-
+  console.log(travelInfo);
   const limeOptions = { color: "lime" };
-
   const tileLayerOptions = {
     attribution: "stamen open street",
     url: "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.jpg",
   } as any;
-  const handleCordinates = async () => {
-    await requestRoute();
+
+  const calculateTravelRoute = async (cords, travelOption) => {
+    const response = await requestRoute(cords, travelOption);
+    const rawCoordinates = response.geometry.coordinates;
+    const leafletReadyRoute = rawCoordinates.map(([lng, lat]) => [lat, lng]);
+    const info = response.properties.summary;
+    const duration = timeCalculator(info.duration);
+    const distance = distanceCalculator(info.distance);
+    const infoAboutTravel = { duration, distance };
+    setTravelInfo(infoAboutTravel);
+    setTravelRoute(leafletReadyRoute);
   };
 
   return (
     <div className="map-wrapper">
-      <MapContainer center={[46.31, 16.34]} zoom={12}>
-        {/*  <TileLayer {...tileLayerOptions} /> */}
+      <RoutePannel calculateTravelRoute={calculateTravelRoute} navigate={navigate} searchParams={searchParams}/>
+      <MapContainer {...({ center: defaultCoords, zoom: 12 } as any)}>
         <TileLayer {...tileLayerOptions} />
         <MarkerClusterGroup>
-          {cordinates.map((marker, key) => (
-            <Marker
-              key={key}
-              position={marker.geocode}
-              {...({ icon: customIcon } as any)}
-            >
-              {/* <Popup>{marker.popUp}</Popup> */}
-            </Marker>
-          ))}
+          {cords.map((marker, key) => {
+            return (
+              <Marker
+                key={key}
+                position={marker}
+                {...({ icon: customIcon } as any)}
+              >
+                <Popup>
+                  <span>Duration: {travelInfo.duration}</span>
+                  <span>Distance: {travelInfo.distance}</span>
+                </Popup>
+              </Marker>
+            );
+          })}
         </MarkerClusterGroup>
-        <Polyline pathOptions={limeOptions} positions={cordinates} />
+        <Polyline pathOptions={limeOptions} positions={travelRoute} />
       </MapContainer>
     </div>
   );
