@@ -1,16 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./index.css";
 import Input from "#/components/ui/input";
-import debounce from "debounce";
 import { requestCordinates } from "#/api/requestCordinates";
 import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
 import { debouncedFetch } from "#/utils/debounceFetch";
 import type { FormInputType } from "#/types/form.types.ts/FormInputType";
-import { useNavigate, useSearchParams } from "react-router";
+import Btn from "#/components/ui/btn";
+import ListItem from "./ListItem";
 
 const FormInput = ({
   name,
   placeholder,
+  searchParams,
+  navigate,
+  setInputValues,
+  inputValues
 }: FormInputType) => {
   const [searchedDestinations, setSearchedDestinations] = useState<
     GeoJsonFeature[]
@@ -48,9 +52,6 @@ const FormInput = ({
     },
   ]);
   const [activeSearch, setActiveSearch] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>("");
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const handleSearchRequest = async (destination: string) => {
     const response = await requestCordinates(destination);
@@ -58,7 +59,7 @@ const FormInput = ({
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(value);
+    setInputValues(prev => ({...prev, [name]: value}));
     if (value.trim() != "") {
       debouncedFetch(value, handleSearchRequest);
       setActiveSearch(true);
@@ -67,22 +68,25 @@ const FormInput = ({
       setSearchedDestinations([]);
     }
   };
+
   const handleDestinationClick = async (destination: string) => {
-    setInputValue(destination);
+    setInputValues(prev => ({...prev, [name]: destination}));
     setActiveSearch(false);
     const response = await requestCordinates(destination);
     const cords = response.features[0].geometry.coordinates;
     const newParams = new URLSearchParams(searchParams);
-    newParams.set(name, cords)
-    navigate(`/?${newParams.toString()}`)
+    newParams.set(name, cords);
+    navigate(`/?${newParams.toString()}`);
   };
 
+  
+
   return (
-    <fieldset className="form-input">
+    <form className="form-input">
       <Input
         name={name}
         placeholder={placeholder}
-        value={inputValue}
+        value={inputValues[name]}
         onChange={handleInputChange}
         variation={activeSearch && "custom-search"}
       />
@@ -91,12 +95,12 @@ const FormInput = ({
           {searchedDestinations.map((feature, key) => {
             const label = feature.properties.label;
             return (
-              <li key={key} onClick={() => handleDestinationClick(label)}>{label}</li>
+              <ListItem key={key} label={label} handleDestinationClick={handleDestinationClick}/>
             );
           })}
         </ul>
       )}
-    </fieldset>
+    </form>
   );
 };
 export default FormInput;
