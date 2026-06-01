@@ -26,7 +26,11 @@ const RoutePannel = ({ handleTravelRoute, searchParams, navigate }) => {
   };
   const clearRoute = () => {
     navigate("");
-    
+    setInputValues(() => ({
+      start: "",
+      stop: "",
+      end: "",
+    }));
   };
   return (
     <div className="route-pannel">
