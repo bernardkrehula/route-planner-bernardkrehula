@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
+import MapWrapper from "./components/map/MapWrapper";
 
 const defaultCoords = [46.31, 16.34];
 
 const router = createBrowserRouter([
   {
-    element: <App defaultCoords={defaultCoords}/>,
-    path: "/"
+    element: <MapWrapper defaultCoords={defaultCoords} />,
+    path: "/",
   },
 ]);
 export default router;
