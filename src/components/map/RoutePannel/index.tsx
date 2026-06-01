@@ -5,7 +5,7 @@ import FormInput from "./FormInput";
 import TravelOption from "./TravelOption";
 import { parseRouteCoordinates } from "#/utils/mapHelper";
 
-const RoutePannel = ({ handleTravelRoute, searchParams, navigate }) => {
+const RoutePannel = ({ calculateTravelRoute, searchParams, navigate }) => {
   const [activeStop, setActiveStop] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState({
     start: "",
@@ -18,7 +18,7 @@ const RoutePannel = ({ handleTravelRoute, searchParams, navigate }) => {
     const endParams = searchParams.get("end");
     const travelParams = searchParams.get("travel") || "driving-car";
     const cords = parseRouteCoordinates(startParam, endParams);
-    handleTravelRoute(cords, travelParams);
+    calculateTravelRoute(cords, travelParams);
   };
 
   const addStopDestination = async () => {
