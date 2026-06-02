@@ -2,8 +2,9 @@ import Btn from "#/components/ui/btn";
 import { useState } from "react";
 import "./index.css";
 import FormInput from "./FormInput";
-import TravelOption from "./TravelOption";
 import { parseRouteCoordinates } from "#/utils/mapHelper";
+import SelectForm from "./SelectForm";
+import type { GeoJsonFeature } from "#/types/geo.types.ts/GeoJsonFeatureType";
 
 const RoutePannel = ({ calculateTravelRoute, searchParams, navigate }) => {
   const [activeStop, setActiveStop] = useState<boolean>(false);
@@ -32,6 +33,78 @@ const RoutePannel = ({ calculateTravelRoute, searchParams, navigate }) => {
       end: "",
     }));
   };
+  const [activeSearch, setActiveSearch] = useState<boolean>(false);
+  const [searchedDestinations, setSearchedDestinations] = useState<
+    GeoJsonFeature[]
+  >([
+    {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [],
+      },
+      properties: {
+        id: "",
+        gid: "",
+        layer: "",
+        source: "",
+        source_id: "",
+        name: "",
+        confidence: null,
+        match_type: "",
+        accuracy: "",
+        country: "",
+        country_gid: "",
+        country_a: "",
+        region: "",
+        region_gid: "",
+        region_a: "",
+        county: "",
+        county_gid: "",
+        county_a: "",
+        continent: "",
+        continent_gid: "",
+        label: "",
+      },
+      bbox: [],
+    },
+  ]);
+
+  const handleSearchRequest = async (destination: string) => {
+    const response = await requestCordinates(destination);
+    setSearchedDestinations(response.features);
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+    if (value.trim() != "") {
+      debouncedFetch(value, handleSearchRequest);
+      setActiveSearch(true);
+    } else {
+      setActiveSearch(false);
+      setSearchedDestinations([]);
+    }
+  };
+
+  const handleDestinationClick = async (destination: string) => {
+    setInputValues((prev) => ({ ...prev, [name]: destination }));
+    setActiveSearch(false);
+    const response = await requestCordinates(destination);
+    const cords = response.features[0].geometry.coordinates;
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(name, cords);
+    navigate(`/?${newParams.toString()}`);
+  };
+
+  const handleTravelOptionSelect = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const option = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("travel", option);
+    navigate(`/?${newParams.toString()}`);
+  };
+
   return (
     <div className="route-pannel">
       <div className="title">
@@ -42,34 +115,37 @@ const RoutePannel = ({ calculateTravelRoute, searchParams, navigate }) => {
         <FormInput
           name="start"
           placeholder="Start destination"
-          searchParams={searchParams}
-          navigate={navigate}
-          setInputValues={setInputValues}
+          handleInputChange={handleInputChange}
           inputValues={inputValues}
+          activeSearch={activeSearch}
+          searchedDestinations={searchedDestinations}
+          handleDestinationClick={handleDestinationClick}
         />
         {activeStop && (
           <FormInput
             name="stop"
             placeholder="Stop"
-            searchParams={searchParams}
-            navigate={navigate}
-            setInputValues={setInputValues}
+            handleInputChange={handleInputChange}
             inputValues={inputValues}
+            activeSearch={activeSearch}
+            searchedDestinations={searchedDestinations}
+            handleDestinationClick={handleDestinationClick}
           />
         )}
         <FormInput
           name="end"
           placeholder="Destination"
-          searchParams={searchParams}
-          navigate={navigate}
-          setInputValues={setInputValues}
+          handleInputChange={handleInputChange}
           inputValues={inputValues}
+          activeSearch={activeSearch}
+          searchedDestinations={searchedDestinations}
+          handleDestinationClick={handleDestinationClick}
         />
       </div>
       <Btn type="button" onClick={addStopDestination} variation="secondary">
         {activeStop ? "Remove stop" : "Add stop"}
       </Btn>
-      <TravelOption />
+      <SelectForm handleTravelOptionSelect={handleTravelOptionSelect} />
       <div className="routing-btns">
         <Btn type="button" onClick={handleCheckPoints} variation="secondary">
           Calcutate route
