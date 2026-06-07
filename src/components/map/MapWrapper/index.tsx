@@ -1,29 +1,24 @@
 import "./index.css";
-import MarkerClusterGroup from "react-leaflet-markercluster";
 import {
-  MapContainer,
+  AdvancedMarker,
+  APIProvider,
+  Map,
   Marker,
-  TileLayer,
-  Popup,
-  Polyline,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-
-import { Icon } from "leaflet";
+  Pin,
+  type MapCameraChangedEvent,
+} from "@vis.gl/react-google-maps";
 import { useNavigate, useSearchParams } from "react-router";
 import { parseRouteCoordinates } from "#/utils/mapHelper";
 import { useEffect, useState } from "react";
-import { requestRoute } from "#/api/requestRoute";
-import { timeCalculator } from "#/utils/timeCalculator";
-import { distanceCalculator } from "#/utils/distanceCalculator";
 import RoutePannel from "../RoutePannel";
 
+const ApiKey = import.meta.env.VITE_GOOGLE_MAPS_PLACES_API_KEY;
+
+const cords = {
+  lat: 53.54992,
+  lng: 10.00678,
+};
 const MapWrapper = ({ defaultCoords }) => {
-  const [travelRoute, setTravelRoute] = useState([[0, 0]]);
-  const [travelInfo, setTravelInfo] = useState({
-    distance: "0",
-    duration: "0",
-  });
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -31,55 +26,17 @@ const MapWrapper = ({ defaultCoords }) => {
     navigate("");
   }, []);
 
-  const startParam = searchParams.get("start");
-  const endParams = searchParams.get("end");
-  const cords = parseRouteCoordinates(startParam, endParams);
-  const customIcon = new Icon({
-    iconUrl: "/location.png",
-    iconSize: [38, 38],
-  });
-  console.log(travelInfo);
-  const limeOptions = { color: "lime" };
-  const tileLayerOptions = {
-    attribution: "stamen open street",
-    url: "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.jpg",
-  } as any;
-
-  const calculateTravelRoute = async (cords, travelOption) => {
-    const response = await requestRoute(cords, travelOption);
-    const rawCoordinates = response.geometry.coordinates;
-    const leafletReadyRoute = rawCoordinates.map(([lng, lat]) => [lat, lng]);
-    const info = response.properties.summary;
-    const duration = timeCalculator(info.duration);
-    const distance = distanceCalculator(info.distance);
-    const infoAboutTravel = { duration, distance };
-    setTravelInfo(infoAboutTravel);
-    setTravelRoute(leafletReadyRoute);
-  };
-
   return (
     <div className="map-wrapper">
-      <RoutePannel calculateTravelRoute={calculateTravelRoute} navigate={navigate} searchParams={searchParams}/>
-      <MapContainer {...({ center: defaultCoords, zoom: 12 } as any)}>
-        <TileLayer {...tileLayerOptions} />
-        <MarkerClusterGroup>
-          {cords.map((marker, key) => {
-            return (
-              <Marker
-                key={key}
-                position={marker}
-                {...({ icon: customIcon } as any)}
-              >
-                <Popup>
-                  <span>Duration: {travelInfo.duration}</span>
-                  <span>Distance: {travelInfo.distance}</span>
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MarkerClusterGroup>
-        <Polyline pathOptions={limeOptions} positions={travelRoute} />
-      </MapContainer>
+      <APIProvider apiKey={ApiKey}>
+        <RoutePannel searchParams={searchParams} navigate={navigate} />
+        <Map
+          className="map"
+          mapId={"d10c35da7e1c69a696d8e796"}
+          defaultZoom={12}
+          defaultCenter={cords}
+        ></Map>
+      </APIProvider>
     </div>
   );
 };
