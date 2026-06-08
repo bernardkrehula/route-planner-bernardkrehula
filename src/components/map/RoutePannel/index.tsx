@@ -27,7 +27,9 @@ const RoutePannel = ({ searchParams, navigate, setCoordinates }) => {
     inputValues[activeInputName],
   );
 
-  
+ 
+
+  const suggestions = filterSuggestions(rawSuggestions);
 
   const addStopDestination = async () => {
     setActiveStop((prev) => !prev);
