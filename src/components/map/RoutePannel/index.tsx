@@ -23,6 +23,11 @@ const RoutePannel = ({ searchParams, navigate, setCoordinates }) => {
     (key) => activeSearch[key],
   );
 
+  const { suggestions: rawSuggestions, isLoading } = useAutocompleteSuggestions(
+    inputValues[activeInputName],
+  );
+
+  
 
   const addStopDestination = async () => {
     setActiveStop((prev) => !prev);
