@@ -19,6 +19,10 @@ const RoutePannel = ({ searchParams, navigate, setCoordinates }) => {
     stop: false,
     end: false,
   });
+  const activeInputName = Object.keys(activeSearch).find(
+    (key) => activeSearch[key],
+  );
+
 
   const addStopDestination = async () => {
     setActiveStop((prev) => !prev);
