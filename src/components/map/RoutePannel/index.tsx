@@ -27,7 +27,21 @@ const RoutePannel = ({ searchParams, navigate, setCoordinates }) => {
     inputValues[activeInputName],
   );
 
- 
+  const getCoordinates = async (destinationId: string) => {
+    const { Place } = await google.maps.importLibrary("places");
+    const place = new Place({
+      id: destinationId,
+    });
+    await place.fetchFields({
+      fields: ["displayName", "formattedAddress", "location", "googleMapsURI"],
+    });
+
+    const { lat: latitude, lng: longitude } = place.location;
+    const lat = latitude();
+    const lng = longitude();
+    console.log(lat);
+    setCoordinates((prev) => [...prev, { lat, lng }]);
+  };
 
   const suggestions = filterSuggestions(rawSuggestions);
 
