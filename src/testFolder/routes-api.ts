@@ -11,13 +11,14 @@ export class RoutesApi {
   constructor(apiKey: string) {
     this.apiKey = apiKey;
   }
-
+  
   async computeRoutes(
     from: google.maps.LatLngLiteral,
     to: google.maps.LatLngLiteral,
     stop: google.maps.LatLngLiteral,
     options: any
   ) {
+    console.log(from, to, stop)
     const routeRequest = {
       origin: {
         location: {latLng: {longitude: from.lng, latitude: from.lat}}
@@ -25,9 +26,10 @@ export class RoutesApi {
       destination: {
         location: {latLng: {longitude: to.lng, latitude: to.lat}}
       },
-      intermediates: {
-        location: {latLng: {longitude: stop.lng, latitude: stop.lat}}
-      },
+      intermediates: [
+        { location: { latLng: { latitude: 46.30, longitude: 16.33 } } }, // Varaždin
+  { location: { latLng: { latitude: 47.49, longitude: 19.04 } } }
+      ],
       ...options
     };
 
