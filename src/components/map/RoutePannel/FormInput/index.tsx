@@ -9,10 +9,9 @@ const FormInput = ({
   inputValues,
   activeSearch,
   handleInputChange,
-  searchedDestinations,
-  handleDestinationClick
+  handleDestinationClick,
+  suggestions,
 }: FormInputType) => {
-
   return (
     <form className="form-input">
       <Input
@@ -20,14 +19,21 @@ const FormInput = ({
         placeholder={placeholder}
         value={inputValues[name]}
         onChange={handleInputChange}
-        variation={activeSearch && "custom-search"}
+        variation={activeSearch[name] && "custom-search"}
       />
-      {activeSearch && (
+      {activeSearch[name] && (
         <ul className="destination-options">
-          {searchedDestinations.map((feature, key) => {
-            const label = feature.properties.label;
+          {suggestions.map((suggestion, key) => {
+            const { locationId, location } = suggestion;
+
             return (
-              <ListItem key={key} label={label} handleDestinationClick={handleDestinationClick}/>
+              <ListItem
+                key={key}
+                label={location}
+                handleDestinationClick={() =>
+                  handleDestinationClick(locationId, location, name)
+                }
+              />
             );
           })}
         </ul>
