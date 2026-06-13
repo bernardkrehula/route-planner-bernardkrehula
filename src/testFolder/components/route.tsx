@@ -35,12 +35,11 @@ const Route = (props: RouteProps) => {
 
   useEffect(() => {
     if (!map) return;
-
+  
     apiClient
       .computeRoutes(origin, destination, intermediates, routeOptions)
       .then((res) => {
         // we're only interested in the first result for this case
-        console.log(res, "origin: ", origin, "destination: ", destination);
         const [route] = res.routes;
         // store in state and trigger rerendering
         setRoute(route);
@@ -63,7 +62,7 @@ const Route = (props: RouteProps) => {
   // With only two waypoints, our route will have a single leg.
   // We now want to create a visualization for the steps in that leg.
   const routeSteps: any[] = route.legs[0].steps;
-
+  
   const appearance = { ...defaultAppearance, ...props.appearance };
 
   // Every step of the route is visualized using a polyline (see ./polyline.tsx);
@@ -117,6 +116,7 @@ const Route = (props: RouteProps) => {
   return (
     <>
       <AdvancedMarker position={origin} />
+      <AdvancedMarker position={intermediates}/>
       <AdvancedMarker position={destination} />
 
       {polylines}
