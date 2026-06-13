@@ -1,9 +1,9 @@
-const fields = ['routes.viewport', 'routes.legs', 'routes.polylineDetails'];
+const fields = ["routes.viewport", "routes.legs", "routes.polylineDetails"];
 
 // docs at https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes
 
 const ROUTES_API_ENDPOINT =
-  'https://routes.googleapis.com/directions/v2:computeRoutes';
+  "https://routes.googleapis.com/directions/v2:computeRoutes";
 
 export class RoutesApi {
   private readonly apiKey: string;
@@ -11,43 +11,53 @@ export class RoutesApi {
   constructor(apiKey: string) {
     this.apiKey = apiKey;
   }
-  
+
   async computeRoutes(
     from: google.maps.LatLngLiteral,
     to: google.maps.LatLngLiteral,
     stop: google.maps.LatLngLiteral,
-    options: any
+    options: any,
   ) {
-    console.log(from, to, stop)
-    const routeRequest = {
-      origin: {
-        location: {latLng: {longitude: from.lng, latitude: from.lat}}
-      },
-      destination: {
-        location: {latLng: {longitude: to.lng, latitude: to.lat}}
-      },
-      intermediates: [
-        { location: { latLng: { latitude: 46.30, longitude: 16.33 } } }, // Varaždin
-  { location: { latLng: { latitude: 47.49, longitude: 19.04 } } }
-      ],
-      ...options
-    };
-
+    let routeRequest;
+    if (stop != null) {
+      routeRequest = {
+        origin: {
+          location: { latLng: { longitude: from.lng, latitude: from.lat } },
+        },
+        destination: {
+          location: { latLng: { longitude: to.lng, latitude: to.lat } },
+        },
+        intermediates: [
+          { location: { latLng: { latitude: stop.lat, longitude: stop.lng } } },
+        ],
+        ...options,
+      };
+    } else {
+      routeRequest = {
+        origin: {
+          location: { latLng: { longitude: from.lng, latitude: from.lat } },
+        },
+        destination: {
+          location: { latLng: { longitude: to.lng, latitude: to.lat } },
+        },
+        ...options,
+      };
+    }
     const url = new URL(ROUTES_API_ENDPOINT);
-    url.searchParams.set('fields', fields.join(','));
+    url.searchParams.set("fields", fields.join(","));
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': this.apiKey
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": this.apiKey,
       },
-      body: JSON.stringify(routeRequest)
+      body: JSON.stringify(routeRequest),
     });
-
+    console.log(response)
     if (!response.ok) {
       throw new Error(
-        `Request failed with status: ${response.status} - ${response.statusText}`
+        `Request failed with status: ${response.status} - ${response.statusText}`,
       );
     }
 
