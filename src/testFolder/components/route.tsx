@@ -58,7 +58,24 @@ const Route = (props: RouteProps) => {
 
   const appearance = { ...defaultAppearance, ...props.appearance };
 
+  const polylines = route.legs.map((leg) => {
+    return leg.steps.map((step, index) => {
+      const isWalking = step.travelMode === "WALK";
+      const color = isWalking
+        ? appearance.walkingPolylineColor
+        : (step?.transitDetails?.transitLine?.color ??
+          appearance.defaultPolylineColor);
 
+      return (
+        <Polyline
+          key={`${index}-polyline`}
+          encodedPath={step.polyline.encodedPolyline}
+          strokeWeight={isWalking ? 2 : 6}
+          strokeColor={color}
+        />
+      );
+    });
+  });
 
   return (
     <>
