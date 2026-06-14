@@ -8,6 +8,16 @@ export const travelReducer = (
   switch (action.type) {
     case "SET_ROUTE":
       return { ...state, route: action.payload };
+    case "SET_COORDS":
+      const { checkpoint, coords } = action.payload;
+      const { lat, lng } = coords;
+      return {
+        ...state,
+        coordinates: {
+          ...state.coordinates,
+          [checkpoint]: { lat: lat, lng: lng },
+        },
+      };
     case "SET_TRAVEL_INFO":
       if (JSON.stringify(state.legs) === JSON.stringify(action.payload.legs))
         return state;
