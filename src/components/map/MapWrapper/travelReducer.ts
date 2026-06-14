@@ -6,6 +6,8 @@ export const travelReducer = (
   action: TravelAction,
 ): TravelInfo => {
   switch (action.type) {
+    case "SET_ROUTE":
+      return { ...state, route: action.payload };
     case "SET_TRAVEL_INFO":
       if (JSON.stringify(state.legs) === JSON.stringify(action.payload.legs))
         return state;
