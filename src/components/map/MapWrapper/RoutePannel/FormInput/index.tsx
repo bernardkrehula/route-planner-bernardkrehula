@@ -24,7 +24,7 @@ const FormInput = ({
       {activeSearch[name] && (
         <ul className="destination-options">
           {suggestions.map((suggestion, key) => {
-            const { locationId, location } = suggestion;
+            const { location } = suggestion;
 
             return (
               <ListItem
