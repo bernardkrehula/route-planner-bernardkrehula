@@ -28,6 +28,7 @@ const MapWrapper = () => {
           <Route
             apiClient={apiClient}
             appearance={appearance}
+            routeOptions={routeOptions}
             state={state}
             dispatch={dispatch}
           />
