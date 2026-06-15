@@ -128,7 +128,7 @@ const RoutePannel = ({ state, dispatch }) => {
           handleDestinationClick={handleDestinationClick}
           suggestions={suggestions}
         />
-        {travelInfo[1]}
+        {travelInfo[0]}
         {activeStop && (
           <FormInput
             name="stop"
@@ -140,7 +140,7 @@ const RoutePannel = ({ state, dispatch }) => {
             suggestions={suggestions}
           />
         )}
-        {travelInfo[0]}
+        {travelInfo[1]}
         <FormInput
           name="end"
           placeholder="Destination"
