@@ -18,6 +18,9 @@ export const travelReducer = (
           [checkpoint]: { lat: lat, lng: lng },
         },
       };
+    case "SET_TRAVEL_MODE":
+      const { travelMode } = action.payload;
+      return { ...state, travelMode: travelMode };
     case "SET_TRAVEL_INFO":
       if (JSON.stringify(state.legs) === JSON.stringify(action.payload.legs))
         return state;
