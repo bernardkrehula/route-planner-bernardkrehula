@@ -1,10 +1,10 @@
 import "./index.css";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { useReducer } from "react";
-import RoutePannel from "../RoutePannel";
+import RoutePannel from "./RoutePannel";
 import Route from "./Route";
 import { travelReducer } from "./travelReducer";
-import { apiClient, appearance, mapOptions } from "./constants/mapConfig";
+import { apiClient, appearance, mapOptions, routeOptions } from "./constants/mapConfig";
 
 const ApiKey = import.meta.env.VITE_GOOGLE_MAPS_PLACES_API_KEY;
 
@@ -19,7 +19,7 @@ const MapWrapper = () => {
     route: null,
     travelMode: "DRIVE",
   });
-
+ 
   return (
     <div className="map-wrapper">
       <APIProvider apiKey={ApiKey}>
