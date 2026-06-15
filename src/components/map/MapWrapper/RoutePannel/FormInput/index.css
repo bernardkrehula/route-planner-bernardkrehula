@@ -1,0 +1,20 @@
+.form-input{
+    border: none;
+}
+.destination-options{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255, 0.8);
+    border-end-start-radius: 15px;
+    border-end-end-radius: 15px;
+}
+.destination-options li{
+    list-style: none;
+    font-size: 1.3rem;
+    padding: 4px 9px;
+    cursor: pointer;
+}
+.destination-options li:hover{
+    background-color: rgb(240, 197, 25);
+    border-radius: 15px;
+}
